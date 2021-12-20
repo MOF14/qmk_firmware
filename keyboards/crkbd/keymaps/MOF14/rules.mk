@@ -4,7 +4,7 @@ OLED_DRIVER = SSD1306
 RGBLIGHT_ENABLE = yes
 
 WPM_ENABLE = yes
-TAP_DANCE_ENABLE = yes 
+# TAP_DANCE_ENABLE = yes 
 
 
 # space saving efforts
