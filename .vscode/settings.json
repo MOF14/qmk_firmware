@@ -26,5 +26,15 @@
     "python.formatting.provider": "yapf",
     "[json]": {
 	    "editor.formatOnSave": false
-    }
+    },
+    "cSpell.words": [
+        "COLEMAKDH",
+        "crkbd",
+        "Drashna",
+        "glcdfont",
+        "Jaelre",
+        "OLED",
+        "RGBLED"
+    ],
+    "C_Cpp.errorSquiggles": "Disabled"
 }

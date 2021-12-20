@@ -25,7 +25,7 @@ rgb animations disabled due to space
 */
 
 /* todo lists
-TODO: 12/20/21, finish optomizing keymap. can probably remove toggle on qwerty.
+TODO: 12/20/21, finish optimizing keymap. can probably remove toggle on qwerty.
 TODO: 12/20/21, look into implementing a more complex OLED animation.
 
 */
