@@ -77,7 +77,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                        KC_P0,  KC_P1,   KC_P2,   KC_P3,  KC_PPLS, KC_PENT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, KC_SPC, _______,     MO(_ADJUST), KC_ENT, KC_RALT
+                                          KC_LGUI, KC_SPC, KC_TRNS,     MO(_ADJUST), KC_ENT, KC_RALT
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -89,19 +89,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE, KC_TILD,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                        KC_LGUI, KC_SPC, MO(_ADJUST),   _______, KC_ENT,  KC_RALT
+                                        KC_LGUI, KC_SPC, MO(_ADJUST),   KC_TRNS, KC_ENT,  KC_RALT
                                       //`--------------------------'  `--------------------------'
   ),
 
   [_ADJUST] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-        RESET, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,               TG(_COLEMAKDH), TG(_QWERTY), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        RESET, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,               TG(_COLEMAKDH), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,                      KC_VOLU, KC_BRIU, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, XXXXXXX, XXXXXXX,                      KC_VOLD, KC_BRID, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI,_______,KC_SPC,       KC_ENT,_______,   KC_RALT
+                                          KC_LGUI,  KC_TRNS,KC_SPC,       KC_ENT, KC_TRNS,   KC_RALT
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -149,26 +149,26 @@ void oled_layer_callout(void) {
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    switch (get_highest_layer(state)) {
-    case _QWERTY:
-        rgblight_setrgb (91, 134, 193);
-        break;
-    case _COLEMAKDH:
-        rgblight_setrgb (115, 149, 174);
-        break;
-    case _NUMBERS:
-        rgblight_setrgb (116, 124, 159);
-        break;
-    case _SYMBOLS:
-        rgblight_setrgb (161, 178, 135);
-        break;
-    case _ADJUST:
-        rgblight_setrgb (161, 178, 135);
-        break;
-    default: //  for any other layers, or the default layer
-        rgblight_setrgb (255, 255, 255);
-        break;
-    }
+    // switch (get_highest_layer(state)) {
+    // case _QWERTY:
+    //     rgblight_setrgb (91, 134, 193);
+    //     break;
+    // case _COLEMAKDH:
+    //     rgblight_setrgb (115, 149, 174);
+    //     break;
+    // case _NUMBERS:
+    //     rgblight_setrgb (116, 124, 159);
+    //     break;
+    // case _SYMBOLS:
+    //     rgblight_setrgb (161, 178, 135);
+    //     break;
+    // case _ADJUST:
+    //     rgblight_setrgb (161, 178, 135);
+    //     break;
+    // default: //  for any other layers, or the default layer
+    //     rgblight_setrgb (255, 255, 255);
+    //     break;   
+    // }
 
     /* colors:
         glaucous: rgba(91, 134, 193, 1);
@@ -178,23 +178,55 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         laurel-green: rgba(161, 178, 135, 1);
         white: rgba(255, 255, 255, 1);
     */
+
+   switch (get_highest_layer(state)) {
+    case _QWERTY:
+        rgblight_setrgb (114, 9, 183);
+        break;
+    case _COLEMAKDH:
+        rgblight_setrgb (20, 33, 61);
+        break;
+    case _NUMBERS:
+        rgblight_setrgb (252, 163, 17);
+        break;
+    case _SYMBOLS:
+        rgblight_setrgb (42, 157, 143);
+        break;
+    case _ADJUST:
+        rgblight_setrgb (138, 21, 43);
+        break;
+    default: //  for any other layers, or the default layer
+        rgblight_setrgb (255, 0, 0);
+        break;   
+    }
+
+    /* colors set 2
+        purple: rgba(114, 9, 183, 1);
+        oxford-blue: rgba(20, 33, 61, 1);
+        orange-web: rgba(252, 163, 17, 1);
+        persian-green: rgba(42, 157, 143, 1);
+        antique-ruby: rgba(138, 21, 43, 1);
+        red: rgba(255, 0, 0, 1);
+
+        https://coolors.co/7209b7-14213d-fca311-2a9d8f-8a152b-ff0000
+    */
   return state;
 }
 
-void render_bootmagic_status(bool status) {
-    /* Show Ctrl-Gui Swap options */
-    static const char PROGMEM logo[][2][3] = {
-        {{0x97, 0x98, 0}, {0xb7, 0xb8, 0}},
-        {{0x95, 0x96, 0}, {0xb5, 0xb6, 0}},
-    };
-    if (status) {
-        oled_write_ln_P(logo[0][0], false);
-        oled_write_ln_P(logo[0][1], false);
-    } else {
-        oled_write_ln_P(logo[1][0], false);
-        oled_write_ln_P(logo[1][1], false);
-    }
-}
+// void render_bootmagic_status(bool status) {
+//     /* Show Ctrl-Gui Swap options */
+//     static const char PROGMEM logo[][2][3] = {
+//         {{0x97, 0x98, 0}, {0xb7, 0xb8, 0}},
+//         {{0x95, 0x96, 0}, {0xb5, 0xb6, 0}},
+//     };
+//     if (status) {
+//         oled_write_ln_P(logo[0][0], false);
+//         oled_write_ln_P(logo[0][1], false);
+//     } else {
+//         oled_write_ln_P(logo[1][0], false);
+//         oled_write_ln_P(logo[1][1], false);
+//     }
+// }
 
 
 
