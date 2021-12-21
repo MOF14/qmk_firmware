@@ -23,7 +23,7 @@ to compile use: qmk compile -kb crkbd
 
 rgb animations disabled due to space
 
-12/20/21 filesize: 25316/28672 (88%, 3356 bytes free)
+12/20/21 filesize: 27090/28672 (94%, 1582 bytes free)
 */
 
 /* todo lists
@@ -42,6 +42,8 @@ enum layers {
     _NUMBERS,
     _SYMBOLS,
     _ADJUST,
+    _CAD_NUM,
+    _CAD_FN,
 }; //assign variables to layer names
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -97,7 +99,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_ADJUST] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-        RESET, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,               TG(_COLEMAKDH), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        RESET, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,               TG(_COLEMAKDH), TG(_CAD_NUM), TG(_CAD_FN), XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,                      KC_VOLU, KC_BRIU, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -107,7 +109,45 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                       //`--------------------------'  `--------------------------'
   ),
 
-  
+
+  [_CAD_NUM] = LAYOUT_split_3x6_3(
+  //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+      KC_PSLS, KC_PAST, KC_1,      KC_2,   KC_3,  KC_BSPC,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+      KC_PMNS, KC_PPLS, KC_4,     KC_5,    KC_6,  KC_DOT,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+      XXXXXXX, XXXXXXX, KC_7,     KC_8,    KC_9,    KC_0,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                          XXXXXXX, XXXXXXX,XXXXXXX,    MO(_ADJUST), XXXXXXX,   XXXXXXX
+                                      //`--------------------------'  `--------------------------'
+  ),
+
+  [_CAD_FN] = LAYOUT_split_3x6_3(
+  //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+      XXXXXXX, KC_ESC,      KC_Q,   KC_W,   KC_E,   KC_R,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+      XXXXXXX, KC_F,      KC_A,   KC_S,   KC_D,   KC_F,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+      XXXXXXX, KC_Z,      KC_Z,   KC_X,   KC_C,   KC_C,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                          XXXXXXX,  KC_N,  XXXXXXX,    MO(_ADJUST), XXXXXXX,   XXXXXXX
+                                      //`--------------------------'  `--------------------------'
+  ),
+
+  /*
+  [_CAD_1] = LAYOUT_split_3x6_3(
+  //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                          XXXXXXX, XXXXXXX,XXXXXXX,    XXXXXXX, XXXXXXX,   XXXXXXX
+                                      //`--------------------------'  `--------------------------'
+  ), 
+  */
+
 };
 
 #ifdef OLED_ENABLE
@@ -121,6 +161,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
   return rotation;
 }
 
+/*
 void oled_layer_callout(void) {
     // Host Keyboard Layer Status
     oled_write_P(PSTR("Layer: "), false);
@@ -151,42 +192,46 @@ void oled_layer_callout(void) {
     oled_write_P(led_state.num_lock ? PSTR("NUM ") : PSTR("    "), false);
     oled_write_P(led_state.caps_lock ? PSTR("CAP ") : PSTR("    "), false);
     oled_write_P(led_state.scroll_lock ? PSTR("SCR ") : PSTR("    "), false);
-}
+} 
+*/
 
-layer_state_t layer_state_set_user(layer_state_t state) {
-   switch (get_highest_layer(state)) {
-    case _QWERTY:
-        rgblight_setrgb (114, 9, 183);
-        break;
-    case _COLEMAKDH:
-        rgblight_setrgb (20, 33, 61);
-        break;
-    case _NUMBERS:
-        rgblight_setrgb (252, 163, 17);
-        break;
-    case _SYMBOLS:
-        rgblight_setrgb (42, 157, 143);
-        break;
-    case _ADJUST:
-        rgblight_setrgb (138, 21, 43);
-        break;
-    default: //  for any other layers, or the default layer
-        rgblight_setrgb (255, 0, 0);
-        break;   
-    }
+// turned off due to build error
 
-    /* colors set 2
-        purple: rgba(114, 9, 183, 1);
-        oxford-blue: rgba(20, 33, 61, 1);
-        orange-web: rgba(252, 163, 17, 1);
-        persian-green: rgba(42, 157, 143, 1);
-        antique-ruby: rgba(138, 21, 43, 1);
-        red: rgba(255, 0, 0, 1);
+// layer_state_t layer_state_set_user(layer_state_t state) {
+//    switch (get_highest_layer(state)) {
+//     case _QWERTY:
+//         rgblight_setrgb (114, 9, 183);
+//         break;
+//     case _COLEMAKDH:
+//         rgblight_setrgb (20, 33, 61);
+//         break;
+//     case _NUMBERS:
+//         rgblight_setrgb (252, 163, 17);
+//         break;
+//     case _SYMBOLS:
+//         rgblight_setrgb (42, 157, 143);
+//         break;
+//     case _ADJUST:
+//         rgblight_setrgb (138, 21, 43);
+//         break;
+//     default: //  for any other layers, or the default layer
+//         rgblight_setrgb (255, 0, 0);
+//         break;   
+//     }
 
-        https://coolors.co/7209b7-14213d-fca311-2a9d8f-8a152b-ff0000
-    */
-  return state;
-}
+//     /* colors set 2
+//         purple: rgba(114, 9, 183, 1);
+//         oxford-blue: rgba(20, 33, 61, 1);
+//         orange-web: rgba(252, 163, 17, 1);
+//         persian-green: rgba(42, 157, 143, 1);
+//         antique-ruby: rgba(138, 21, 43, 1);
+//         red: rgba(255, 0, 0, 1);
+
+//         https://coolors.co/7209b7-14213d-fca311-2a9d8f-8a152b-ff0000
+//     */
+//   return state;
+// } 
+
 
 static void gyoza_fairy_logo(void) {
   static const char PROGMEM gyoza_fairy_logo[] = {
@@ -260,7 +305,6 @@ static void render_luna(int LUNA_X, int LUNA_Y) {
         {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x1c, 0x02, 0x05, 0x02, 0x24, 0x04, 0x04, 0x02, 0xa9, 0x1e, 0xe0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x10, 0x08, 0x68, 0x10, 0x08, 0x04, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x06, 0x82, 0x7c, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02, 0x04, 0x0c, 0x10, 0x10, 0x20, 0x20, 0x20, 0x28, 0x3e, 0x1c, 0x20, 0x20, 0x3e, 0x0f, 0x11, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         },
-
         /* 'sit2', 32x22px */
         {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x1c, 0x02, 0x05, 0x02, 0x24, 0x04, 0x04, 0x02, 0xa9, 0x1e, 0xe0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x90, 0x08, 0x18, 0x60, 0x10, 0x08, 0x04, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x0e, 0x82, 0x7c, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02, 0x04, 0x0c, 0x10, 0x10, 0x20, 0x20, 0x20, 0x28, 0x3e, 0x1c, 0x20, 0x20, 0x3e, 0x0f, 0x11, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
@@ -272,7 +316,7 @@ static void render_luna(int LUNA_X, int LUNA_Y) {
         /* 'walk1', 32x22px */
         {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x40, 0x20, 0x10, 0x90, 0x90, 0x90, 0xa0, 0xc0, 0x80, 0x80, 0x80, 0x70, 0x08, 0x14, 0x08, 0x90, 0x10, 0x10, 0x08, 0xa4, 0x78, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07, 0x08, 0xfc, 0x01, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x18, 0xea, 0x10, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x1c, 0x20, 0x20, 0x3c, 0x0f, 0x11, 0x1f, 0x03, 0x06, 0x18, 0x20, 0x20, 0x3c, 0x0c, 0x12, 0x1e, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        }
+        },
         /* 'walk2', 32x22px */
         {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x40, 0x20, 0x20, 0x20, 0x40, 0x80, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x10, 0x28, 0x10, 0x20, 0x20, 0x20, 0x10, 0x48, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1f, 0x20, 0xf8, 0x02, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x10, 0x30, 0xd5, 0x20, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3f, 0x20, 0x30, 0x0c, 0x02, 0x05, 0x09, 0x12, 0x1e, 0x02, 0x1c, 0x14, 0x08, 0x10, 0x20, 0x2c, 0x32, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -397,6 +441,13 @@ static void print_status_narrow(void) {
         case _ADJUST:
             oled_write_P(PSTR("Adjustment\n"), false);
             break;
+
+        case _CAD_NUM:
+            oled_write_P(PSTR("CAD #\n"), false);
+            break;
+        case _CAD_FN:
+            oled_write_P(PSTR("CAD fn\n"), false);
+            break;
         default:
             // Or use the write_ln shortcut over adding '\n' to the end of your string
             oled_write_ln_P(PSTR("Undefined"), false);
@@ -467,10 +518,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record){
                 isJumping = false;
             }
             break;
-
             /* KEYBOARD PET STATUS END */
     }
     return true;
+}
+
+void suspend_power_down_user(void) {
+    rgb_matrix_set_suspend_state(true);
+    oled_off();
 }
 
 #endif // OLED_ENABLE
