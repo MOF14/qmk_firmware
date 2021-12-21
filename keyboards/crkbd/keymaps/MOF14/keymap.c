@@ -395,15 +395,15 @@ static void print_status_narrow(void) {
     }
 
     /* caps lock */
-    // oled_set_cursor(0, 6);
-    // oled_write("CAPS", led_usb_state.caps_lock);
+    oled_set_cursor(0, 6);
+    oled_write("CAPS", led_usb_state.caps_lock);
 
     // Host Keyboard LED Status
-    oled_set_cursor(0, 6);
-    led_t led_state = host_keyboard_led_state();
-    oled_write_P(led_state.num_lock ? PSTR("    ") : PSTR("NUM "), false);
-    oled_write_P(led_state.caps_lock ? PSTR("CAP ") : PSTR("    "), false);
-    oled_write_P(led_state.scroll_lock ? PSTR("SCR ") : PSTR("    "), false);
+    // oled_set_cursor(0, 6);
+    // led_t led_state = host_keyboard_led_state();
+    // oled_write_P(led_state.num_lock ? PSTR("    ") : PSTR("NUM "), false);
+    // oled_write_P(led_state.caps_lock ? PSTR("CAP ") : PSTR("    "), false);
+    // oled_write_P(led_state.scroll_lock ? PSTR("SCR ") : PSTR("    "), false);
 
     /* wpm */
     oled_set_cursor(0, 9);
