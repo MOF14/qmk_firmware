@@ -121,8 +121,6 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
   return rotation;
 }
 
-// oled_rotation_t oled_init_user(oled_rotation_t rotation) { return OLED_ROTATION_90; }
-
 void oled_layer_callout(void) {
     // Host Keyboard Layer Status
     oled_write_P(PSTR("Layer: "), false);
@@ -368,54 +366,60 @@ static void render_luna(int LUNA_X, int LUNA_Y) {
 
 static void print_status_narrow(void) {
     /* Print current mode */
-    oled_set_cursor(0, 3);
-
-    switch (get_highest_layer(default_layer_state)) {
-        case _QWERTY:
-            oled_write("QWRTY", false);
-            break;
-        case _COLEMAKDH:
-            oled_write("GAMES", false);
-            break;
-        default:
-            oled_write("UNDEF", false);
-    }
-
-    oled_set_cursor(0, 5);
+    oled_set_cursor(0, 2);
 
     /* Print current layer */
-    oled_write("LAYER", false);
+    oled_write("Layer", false);
 
-    oled_set_cursor(0, 6);
+    oled_set_cursor(0, 3);
 
     switch (get_highest_layer(layer_state)) {
         case _QWERTY:
-            oled_write("Base ", false);
+            oled_write_P(PSTR("QWERTY\n"), false);
             break;
         case _COLEMAKDH:
-            oled_write("Games", false);
+            oled_write_P(PSTR("Colemak-DH\n"), false);
             break;
         case _NUMBERS:
-            oled_write("Raise", false);
+            oled_write_P(PSTR("Numbers\n"), false);
             break;
         case _SYMBOLS:
-            oled_write("Lower", false);
+            oled_write_P(PSTR("Symbols\n"), false);
             break;
         case _ADJUST:
-            oled_write("Adj  ", false);
+            oled_write_P(PSTR("Adjustment\n"), false);
             break;
         default:
-            oled_write("Undef", false);
+            // Or use the write_ln shortcut over adding '\n' to the end of your string
+            oled_write_ln_P(PSTR("Undefined"), false);
     }
 
     /* caps lock */
-    oled_set_cursor(0, 8);
-    oled_write("CPSLK", led_usb_state.caps_lock);
+    // oled_set_cursor(0, 6);
+    // oled_write("CAPS", led_usb_state.caps_lock);
+
+    // Host Keyboard LED Status
+    oled_set_cursor(0, 6);
+    led_t led_state = host_keyboard_led_state();
+    oled_write_P(led_state.num_lock ? PSTR("    ") : PSTR("NUM "), false);
+    oled_write_P(led_state.caps_lock ? PSTR("CAP ") : PSTR("    "), false);
+    oled_write_P(led_state.scroll_lock ? PSTR("SCR ") : PSTR("    "), false);
+
+    /* wpm */
+    oled_set_cursor(0, 9);
+    uint8_t n = get_current_wpm();
+    char    wpm_str[4];
+    wpm_str[3] = '\0';
+    wpm_str[2] = '0' + n % 10;
+    wpm_str[1] = '0' + (n /= 10) % 10;
+    wpm_str[0] = '0' + n / 10;
+    oled_write(wpm_str, false);
+
+    oled_set_cursor(0, 10);
+    oled_write(" wpm", false);
 
     /* KEYBOARD PET RENDER START */
-
     render_luna(0, 13);
-
     /* KEYBOARD PET RENDER END */
 }
 
@@ -428,8 +432,6 @@ bool oled_task_user(void) {
     /* KEYBOARD PET VARIABLES END */
 
     if (is_keyboard_master()) {
-        // oled_layer_callout();
-        
         print_status_narrow();
         // gyoza_fairy_logo(); //for animation debugging
     } else {
