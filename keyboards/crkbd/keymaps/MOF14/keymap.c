@@ -54,7 +54,11 @@ enum my_keycodes {
     OLED_DIMMER,
 };
 
-int OLED_BRIGHTNESS_VAL = 255;
+int OLED_BRIGHTNESS_VAL = 128; //initial oled brightness
+double slope = 1.0 * (100) / (255); //used for mapping 0-255 -> 0-100%
+float output;
+
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_QWERTY] = LAYOUT_split_3x6_3(
@@ -510,27 +514,24 @@ static void print_status_narrow(void) {
     }
 
     /* caps lock */
-    // oled_set_cursor(0, 6);
-    // oled_write("CAPS", led_usb_state.caps_lock);
+    oled_set_cursor(0, 6);
+    if (led_usb_state.caps_lock){
+        oled_write("CAPS", led_usb_state.caps_lock);
+    }
+    else {
+        oled_write("CAPS", led_usb_state.caps_lock);
+    }
 
     /* output brightness val */
-    // uint8_t oled_br = OLED_BRIGHTNESS_VAL;
     char    s_oled_br[4];
-    itoa(OLED_BRIGHTNESS_VAL, s_oled_br, 10);
-
+    output = 0 + slope * (OLED_BRIGHTNESS_VAL - 0);
+    itoa(output, s_oled_br, 10);
     oled_set_cursor(0, 7);
-    oled_write("br", false);
+    oled_write("*", false);
+    // oled_set_cursor(0, 8);
     oled_write(s_oled_br, false);
-
-
-
-
-    // Host Keyboard LED Status
-    // oled_set_cursor(0, 6);
-    // led_t led_state = host_keyboard_led_state();
-    // oled_write_P(led_state.num_lock ? PSTR("    ") : PSTR("NUM "), false);
-    // oled_write_P(led_state.caps_lock ? PSTR("CAP ") : PSTR("    "), false);
-    // oled_write_P(led_state.scroll_lock ? PSTR("SCR ") : PSTR("    "), false);
+    oled_write("%", false);
+    s_oled_br[3] = '\0';
 
     /* wpm */
     oled_set_cursor(0, 9);
@@ -560,10 +561,8 @@ bool oled_task_user(void) {
 
     if (is_keyboard_master()) {
         print_status_narrow();
-        // gyoza_fairy_logo(); //for animation debugging
     } else {
         behelit_logo();
-        // zodd_logo();
     }
     return false;
 }
@@ -591,11 +590,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record){
     
     case OLED_BRIGHTER:
         if (record->event.pressed) {
-
-            if (OLED_BRIGHTNESS_VAL != 0 && OLED_BRIGHTNESS_VAL <= 255) {
+            if (OLED_BRIGHTNESS_VAL <= 255) {
                 OLED_BRIGHTNESS_VAL = OLED_BRIGHTNESS_VAL + 51;
-            // OLED_BRIGHTNESS(OLED_BRIGHTNESS_VAL);
-            oled_set_brightness(OLED_BRIGHTNESS_VAL);
+                oled_set_brightness(OLED_BRIGHTNESS_VAL);
             }    
 
             else if (OLED_BRIGHTNESS_VAL == 255 || OLED_BRIGHTNESS_VAL >= 255) {
@@ -603,39 +600,33 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record){
                 oled_set_brightness(255);
             } 
             
-            else if (OLED_BRIGHTNESS_VAL = = 0)
+            else if (OLED_BRIGHTNESS_VAL == 0){
             oled_on();
             OLED_BRIGHTNESS_VAL = 51;
-            // OLED_BRIGHTNESS(OLED_BRIGHTNESS_VAL);
-            oled_set_brightness(OLED_BRIGHTNESS_VAL);
+            oled_set_brightness(51);
             }
         }
-    //   break;
       return false; // Skip all further processing of this key
 
     case OLED_DIMMER:
-    if (record->event.pressed) {
-      if (OLED_BRIGHTNESS_VAL != 51 && OLED_BRIGHTNESS_VAL >=51) {
-        OLED_BRIGHTNESS_VAL = OLED_BRIGHTNESS_VAL - 51;
-        // OLED_BRIGHTNESS(OLED_BRIGHTNESS_VAL);
-        oled_set_brightness(OLED_BRIGHTNESS_VAL);
-      }
+        if (record->event.pressed) {
+            if (OLED_BRIGHTNESS_VAL != 51 && OLED_BRIGHTNESS_VAL >=51) {
+                OLED_BRIGHTNESS_VAL = OLED_BRIGHTNESS_VAL - 51;
+                oled_set_brightness(OLED_BRIGHTNESS_VAL);
+            }
 
-      else if (OLED_BRIGHTNESS_VAL >= 0 && OLED_BRIGHTNESS_VAL <= 51) {
+            else if (OLED_BRIGHTNESS_VAL >= -51) {
                 OLED_BRIGHTNESS_VAL = 51;
                 oled_set_brightness(51);
             }
 
-      else if (OLED_BRIGHTNESS_VAL == 51)
-      {
-        oled_off();
-        OLED_BRIGHTNESS_VAL = 0;
-      }
-    }
-
-      
-    //   break;
+            else if (OLED_BRIGHTNESS_VAL == 51){
+                oled_off();
+                OLED_BRIGHTNESS_VAL = 0;
+            }
+        } 
       return false; // Skip all further processing of this key
+
     default:
       return true; // Process all other keycodes normally
     }
