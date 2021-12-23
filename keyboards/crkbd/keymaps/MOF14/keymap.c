@@ -23,7 +23,7 @@ to compile use: qmk compile -kb crkbd
 
 rgb animations disabled due to space
 
-12/20/21 filesize: 27090/28672 (94%, 1582 bytes free)
+12/23/21 filesize: 27572/28672 (96%, 1100 bytes free)
 */
 
 /* todo lists
@@ -58,6 +58,8 @@ int OLED_BRIGHTNESS_VAL = 128; //initial oled brightness
 double slope = 1.0 * (100) / (255); //used for mapping 0-255 -> 0-100%
 float output;
 
+static const char sun_string[1] = {0x0F};
+
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -78,11 +80,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,                         KC_J,    KC_L,    KC_U,   KC_Y, KC_SCLN, KC_BSPC,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL,    KC_A,    KC_R,    KC_S,    KC_T,    KC_G,                         KC_M,    KC_N,    KC_E,   KC_I, KC_O, KC_QUOT,
+      KC_LCTL,LGUI_T(KC_A),LALT_T(KC_R),LCTL_T(KC_S),LSFT_T(KC_T),KC_G,     KC_M, RSFT_T(KC_N),RCTL_T(KC_E),LALT_T(KC_I),RGUI_T(KC_O),   KC_QUOT,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,                         KC_K,    KC_H, KC_COMM,  KC_DOT, KC_SLSH,  KC_ESC,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                        KC_LGUI,   KC_SPC, MO(_NUMBERS),    MO(_SYMBOLS), KC_BSPC,  KC_RALT
+                                LSFT_T(KC_ENT),KC_SPC,MO(_NUMBERS),    MO(_SYMBOLS), KC_BSPC,  RSFT_T(KC_TAB)
                                       //`--------------------------'  `--------------------------'
 
   ),
@@ -103,7 +105,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_TAB, KC_EXLM,   KC_AT, KC_HASH,  KC_DLR, KC_PERC,                      KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_BSPC,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      KC_MINS,  KC_EQL, KC_LBRC, KC_RBRC, KC_BSLS,  KC_GRV,
+      KC_LCTL, KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT, XXXXXXX,                      KC_MINS,  KC_EQL, KC_LBRC, KC_RBRC, KC_BSLS,  KC_GRV,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE, KC_TILD,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -519,7 +521,7 @@ static void print_status_narrow(void) {
         oled_write("CAPS", led_usb_state.caps_lock);
     }
     else {
-        oled_write("CAPS", led_usb_state.caps_lock);
+        oled_write("    ", led_usb_state.caps_lock);
     }
 
     /* output brightness val */
@@ -527,7 +529,7 @@ static void print_status_narrow(void) {
     output = 0 + slope * (OLED_BRIGHTNESS_VAL - 0);
     itoa(output, s_oled_br, 10);
     oled_set_cursor(0, 7);
-    oled_write("*", false);
+    oled_write(sun_string, false);
     // oled_set_cursor(0, 8);
     oled_write(s_oled_br, false);
     oled_write("%", false);
