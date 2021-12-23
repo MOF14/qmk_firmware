@@ -54,8 +54,17 @@ enum my_keycodes {
     OLED_DIMMER,
 };
 
-int OLED_BRIGHTNESS_VAL = 128; //initial oled brightness
-double slope = 1.0 * (100) / (255); //used for mapping 0-255 -> 0-100%
+// Colors                   HSV val
+#define LED_purple          {276, 91, 38}   // rgba(114, 9, 183, 1)
+#define LED_oxford-blue     {221, 51, 16}   // rgba(20, 33, 61, 1)
+#define LED_orange-web      {37, 98, 53}    // rgba(252, 163, 17, 1)
+#define LED_persian-green   {173, 58, 39}   //rgba(42, 157, 143, 1)
+#define LED_antique-ruby    {349, 74, 31}   //rgba(138, 21, 43, 1)
+#define LED_red             {0, 100, 50}    //rgba(255, 0, 0, 1)
+//https://coolors.co/7209b7-14213d-fca311-2a9d8f-8a152b-ff0000
+
+int OLED_BRIGHTNESS_VAL = 128; //initial oled brightness, ~50%
+double slope = 1.0 * (100) / (255); //used for mapping 0-255 -> 0-100% for OLED
 float output;
 
 static const char sun_string[1] = {0x0F};
@@ -176,44 +185,6 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
   }
   return rotation;
 }
-  
-// turned off due to build error
-
-// layer_state_t layer_state_set_user(layer_state_t state) {
-//    switch (get_highest_layer(state)) {
-//     case _QWERTY:
-//         rgblight_setrgb (114, 9, 183);
-//         break;
-//     case _COLEMAKDH:
-//         rgblight_setrgb (20, 33, 61);
-//         break;
-//     case _NUMBERS:
-//         rgblight_setrgb (252, 163, 17);
-//         break;
-//     case _SYMBOLS:
-//         rgblight_setrgb (42, 157, 143);
-//         break;
-//     case _ADJUST:
-//         rgblight_setrgb (138, 21, 43);
-//         break;
-//     default: //  for any other layers, or the default layer
-//         rgblight_setrgb (255, 0, 0);
-//         break;   
-//     }
-
-//     /* colors set 2
-//         purple: rgba(114, 9, 183, 1);
-//         oxford-blue: rgba(20, 33, 61, 1);
-//         orange-web: rgba(252, 163, 17, 1);
-//         persian-green: rgba(42, 157, 143, 1);
-//         antique-ruby: rgba(138, 21, 43, 1);
-//         red: rgba(255, 0, 0, 1);
-
-//         https://coolors.co/7209b7-14213d-fca311-2a9d8f-8a152b-ff0000
-//     */
-//   return state;
-// } 
-
 
 // static void gyoza_fairy_logo(void) {
 //   static const char PROGMEM gyoza_fairy_logo[] = {
@@ -518,19 +489,18 @@ static void print_status_narrow(void) {
     /* caps lock */
     oled_set_cursor(0, 6);
     if (led_usb_state.caps_lock){
-        oled_write("CAPS", led_usb_state.caps_lock);
+        oled_write("CAPS", led_usb_state.caps_lock); //only highlight if CAPS lock is on
     }
     else {
-        oled_write("    ", led_usb_state.caps_lock);
+        oled_write("    ", led_usb_state.caps_lock); //normall don't show anything
     }
 
-    /* output brightness val */
+    /* OLED brightness val */
     char    s_oled_br[4];
     output = 0 + slope * (OLED_BRIGHTNESS_VAL - 0);
     itoa(output, s_oled_br, 10);
     oled_set_cursor(0, 7);
     oled_write(sun_string, false);
-    // oled_set_cursor(0, 8);
     oled_write(s_oled_br, false);
     oled_write("%", false);
     s_oled_br[3] = '\0';
@@ -590,47 +560,47 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record){
             break;
             /* KEYBOARD PET STATUS END */
     
-    case OLED_BRIGHTER:
-        if (record->event.pressed) {
-            if (OLED_BRIGHTNESS_VAL <= 255) {
-                OLED_BRIGHTNESS_VAL = OLED_BRIGHTNESS_VAL + 51;
-                oled_set_brightness(OLED_BRIGHTNESS_VAL);
-            }    
+        case OLED_BRIGHTER:
+            if (record->event.pressed) {
+                if (OLED_BRIGHTNESS_VAL <= 255) {
+                    OLED_BRIGHTNESS_VAL = OLED_BRIGHTNESS_VAL + 51;
+                    oled_set_brightness(OLED_BRIGHTNESS_VAL);
+                }    
 
-            else if (OLED_BRIGHTNESS_VAL == 255 || OLED_BRIGHTNESS_VAL >= 255) {
-                OLED_BRIGHTNESS_VAL = 204;
-                oled_set_brightness(255);
-            } 
-            
-            else if (OLED_BRIGHTNESS_VAL == 0){
-            oled_on();
-            OLED_BRIGHTNESS_VAL = 51;
-            oled_set_brightness(51);
-            }
-        }
-      return false; // Skip all further processing of this key
-
-    case OLED_DIMMER:
-        if (record->event.pressed) {
-            if (OLED_BRIGHTNESS_VAL != 51 && OLED_BRIGHTNESS_VAL >=51) {
-                OLED_BRIGHTNESS_VAL = OLED_BRIGHTNESS_VAL - 51;
-                oled_set_brightness(OLED_BRIGHTNESS_VAL);
-            }
-
-            else if (OLED_BRIGHTNESS_VAL >= -51) {
+                else if (OLED_BRIGHTNESS_VAL == 255 || OLED_BRIGHTNESS_VAL >= 255) {
+                    OLED_BRIGHTNESS_VAL = 204;
+                    oled_set_brightness(255);
+                } 
+                
+                else if (OLED_BRIGHTNESS_VAL == 0){
+                oled_on();
                 OLED_BRIGHTNESS_VAL = 51;
                 oled_set_brightness(51);
+                }
             }
+        return false; // Skip all further processing of this key
 
-            else if (OLED_BRIGHTNESS_VAL == 51){
-                oled_off();
-                OLED_BRIGHTNESS_VAL = 0;
-            }
-        } 
-      return false; // Skip all further processing of this key
+        case OLED_DIMMER:
+            if (record->event.pressed) {
+                if (OLED_BRIGHTNESS_VAL != 51 && OLED_BRIGHTNESS_VAL >=51) {
+                    OLED_BRIGHTNESS_VAL = OLED_BRIGHTNESS_VAL - 51;
+                    oled_set_brightness(OLED_BRIGHTNESS_VAL);
+                }
 
-    default:
-      return true; // Process all other keycodes normally
+                else if (OLED_BRIGHTNESS_VAL >= -51) {
+                    OLED_BRIGHTNESS_VAL = 51;
+                    oled_set_brightness(51);
+                }
+
+                else if (OLED_BRIGHTNESS_VAL == 51){
+                    oled_off();
+                    OLED_BRIGHTNESS_VAL = 0;
+                }
+            } 
+        return false; // Skip all further processing of this key
+
+        default:
+        return true; // Process all other keycodes normally
     }
     return true;
 }
