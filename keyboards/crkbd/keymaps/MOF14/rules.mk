@@ -1,6 +1,8 @@
 OLED_ENABLE = yes
 OLED_DRIVER = SSD1306
 
+SPLIT_KEYBOARD = yes
+
 
 WPM_ENABLE = yes
 # TAP_DANCE_ENABLE = yes 
@@ -13,13 +15,14 @@ RGB_MATRIX_ENABLE = yes
 # if firmware size over limit, try this option
 LTO_ENABLE = yes
 
+EXTRAKEY_ENABLE = yes        # Audio control and System control(+450)
 
 # space saving efforts
 MOUSEKEY_ENABLE  = no # Mouse keys(+4700)
 COMMAND_ENABLE   = no # Commands for debug and configuration
 BOOTMAGIC_ENABLE = no #bootmagic, use reset button rather than keyboard command
 
-EXTRAKEY_ENABLE = no        # Audio control and System control(+450)
+
 CONSOLE_ENABLE = no         # Console for debug(+400)
 NKRO_ENABLE = no            # Nkey Rollover - if this doesn't work, see here: https://github.com/tmk/tmk_keyboard/wiki/FAQ#nkro-doesnt-work
 BACKLIGHT_ENABLE = no       # Enable keyboard backlight functionality
