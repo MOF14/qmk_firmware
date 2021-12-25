@@ -28,9 +28,9 @@ rgb animations disabled due to space
 
 /* todo lists
 TODO: 12/21/21, finish optimizing keymap.
-TODO: 12/21/21, look into tap-dance for CAD layers.
-TODO: 12/21/21, look into OLED_TIMEOUT (config.h)) for flickering on main screen
-TODO: 12/21/21, Look into adding function to brighten and dim OLED (OLED_BRIGHTNESS) with auto off (OLED_OFF) at min.
+TODO: 12/23/21, look into tap-dance for CAD layers.
+TODO: 12/23/21, look into OLED_TIMEOUT (config.h)) for flickering on main screen
+TODO: 12/23/21, Look into optomising function to brighten and dim OLED (OLED_BRIGHTNESS) with auto off (OLED_OFF) at min.
 
 */
 
@@ -41,6 +41,7 @@ TODO: 12/21/21, Look into adding function to brighten and dim OLED (OLED_BRIGHTN
 enum layers {
     _QWERTY,
     _COLEMAKDH,
+    _COLEMAKDH_GAMING, //no homerow mods, allows for holding of keys.
     _CAD_NUM, //CAD functions are lower than "normal" layers in editor.
     _CAD_FN, //CAD functions are lower than "normal" layers in editor.
     _NUMBERS,
@@ -52,22 +53,24 @@ enum layers {
 enum my_keycodes {
     OLED_BRIGHTER = SAFE_RANGE,
     OLED_DIMMER,
+    OLED_TURN_ON,
+    OLED_TURN_OFF,
 };
 
 // Colors                   HSV val
-#define LED_purple          {276, 91, 38}   // rgba(114, 9, 183, 1)
-#define LED_oxford-blue     {221, 51, 16}   // rgba(20, 33, 61, 1)
-#define LED_orange-web      {37, 98, 53}    // rgba(252, 163, 17, 1)
-#define LED_persian-green   {173, 58, 39}   //rgba(42, 157, 143, 1)
-#define LED_antique-ruby    {349, 74, 31}   //rgba(138, 21, 43, 1)
-#define LED_red             {0, 100, 50}    //rgba(255, 0, 0, 1)
+#define LED_purple          {276, 91, 38}   // rgba(114, 9, 183)
+#define LED_oxford_blue     {221, 51, 16}   // rgba(20, 33, 61)
+#define LED_orange_web      {37, 98, 53}    // rgba(252, 163, 17)
+#define LED_persian_green   {173, 58, 39}   //rgba(42, 157, 143)
+#define LED_antique_ruby    {349, 74, 31}   //rgba(138, 21, 43)
+#define LED_red             {0, 100, 50}    //rgba(255, 0, 0)
 //https://coolors.co/7209b7-14213d-fca311-2a9d8f-8a152b-ff0000
 
 int OLED_BRIGHTNESS_VAL = 128; //initial oled brightness, ~50%
 double slope = 1.0 * (100) / (255); //used for mapping 0-255 -> 0-100% for OLED
 float output;
 
-static const char sun_string[1] = {0x0F};
+static const char sun_string[1] = {0x0F}; //sun looking symbol hex value
 
 
 
@@ -89,7 +92,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,                         KC_J,    KC_L,    KC_U,   KC_Y, KC_SCLN, KC_BSPC,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL,LGUI_T(KC_A),LALT_T(KC_R),LCTL_T(KC_S),LSFT_T(KC_T),KC_G,     KC_M, RSFT_T(KC_N),RCTL_T(KC_E),LALT_T(KC_I),RGUI_T(KC_O),   KC_QUOT,
+      KC_LCTL,LGUI_T(KC_A),LALT_T(KC_R),LCTL_T(KC_S),LSFT_T(KC_T),KC_G,     KC_M, RSFT_T(KC_N),RCTL_T(KC_E),LALT_T(KC_I),RGUI_T(KC_O),KC_QUOT,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,                         KC_K,    KC_H, KC_COMM,  KC_DOT, KC_SLSH,  KC_ESC,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -104,7 +107,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LCTL, KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT, XXXXXXX,                       KC_NLCK,  KC_P4,   KC_P5,   KC_P6,  KC_PMNS, KC_PAST,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                        KC_P0,  KC_P1,   KC_P2,   KC_P3,  KC_PPLS, KC_PENT,
+      KC_LSFT,LCTL(KC_Z),LCTL(KC_X),LCTL(KC_C),XXXXXXX,LCTL(KC_V),              KC_P0,  KC_P1,   KC_P2,   KC_P3,  KC_PPLS, KC_PENT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                           KC_LGUI, KC_SPC, KC_TRNS,     MO(_ADJUST), KC_ENT, KC_RALT
                                       //`--------------------------'  `--------------------------'
@@ -122,28 +125,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                       //`--------------------------'  `--------------------------'
   ),
 
-  [_ADJUST] = LAYOUT_split_3x6_3(
+  [_ADJUST] = LAYOUT_split_3x6_3( //CAD adjust in top left is to allow for turn off of CAD layer purely with left hand
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-        RESET, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,               TG(_COLEMAKDH), TG(_CAD_NUM), TG(_CAD_FN), XXXXXXX, XXXXXXX, XXXXXXX,
+        RESET, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, TG(_CAD_NUM),       TG(_COLEMAKDH), TG(_CAD_NUM), TG(_CAD_FN), XXXXXXX, XXXXXXX, TG(_COLEMAKDH_GAMING),
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,                      KC_VOLU, KC_BRIU, OLED_BRIGHTER, XXXXXXX, XXXXXXX, XXXXXXX,
+      RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,                 KC_VOLU,KC_BRIU,OLED_BRIGHTER,OLED_TURN_ON,XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, XXXXXXX, XXXXXXX,                      KC_VOLD, KC_BRID, OLED_DIMMER, XXXXXXX, XXXXXXX, XXXXXXX,
+      RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, XXXXXXX, XXXXXXX,                 KC_VOLD,KC_BRID,OLED_DIMMER,OLED_TURN_OFF,XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                           KC_LGUI,  KC_TRNS,KC_SPC,       KC_ENT, KC_TRNS,   KC_RALT
                                       //`--------------------------'  `--------------------------'
   ),
 
 
-  [_CAD_NUM] = LAYOUT_split_3x6_3(
+  [_CAD_NUM] = LAYOUT_split_3x6_3( //num pad with nav on left hand.
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-      KC_PSLS, KC_PAST, KC_1,      KC_2,   KC_3,  KC_BSPC,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      KC_PSLS, KC_PAST, KC_7,     KC_P8,   KC_9,  KC_BSPC,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_PMNS, KC_PPLS, KC_4,     KC_5,    KC_6,  KC_DOT,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      KC_PMNS, KC_PPLS, KC_P4,     KC_5,    KC_P6,  KC_DOT,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX, KC_7,     KC_8,    KC_9,    KC_0,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+LT(_ADJUST, KC_NUM), XXXXXXX,  KC_1,    KC_P2,    KC_3,    KC_0,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          XXXXXXX, XXXXXXX,XXXXXXX,    MO(_ADJUST), XXXXXXX,   XXXXXXX
+                                          KC_BSPC, KC_ENT,TG(_CAD_FN),    MO(_ADJUST), XXXXXXX,   XXXXXXX
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -155,7 +158,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       XXXXXXX, KC_Z,      KC_Z,   KC_X,   KC_C,   KC_C,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          XXXXXXX,  KC_N,  XXXXXXX,    MO(_ADJUST), XXXXXXX,   XXXXXXX
+                                          KC_ENT,  KC_N,  TG(_CAD_FN),    MO(_ADJUST), XXXXXXX,   XXXXXXX
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -172,6 +175,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                       //`--------------------------'  `--------------------------'
   ), 
   */
+
+ [_COLEMAKDH_GAMING] = LAYOUT_split_3x6_3(
+  //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+       KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,                         KC_J,    KC_L,    KC_U,   KC_Y, KC_SCLN, KC_BSPC,
+  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+      KC_LCTL,    KC_A,     KC_R,   KC_S,    KC_T,    KC_G,                         KC_M,   KC_N,     KC_E,   KC_I,   KC_O,KC_QUOT,
+  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+      KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,                         KC_K,    KC_H, KC_COMM,  KC_DOT, KC_SLSH,  KC_ESC,
+  //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                LSFT_T(KC_ENT),KC_SPC,MO(_NUMBERS),    MO(_SYMBOLS), KC_BSPC,  RSFT_T(KC_TAB)
+                                      //`--------------------------'  `--------------------------'
+
+  ),
 
 };
 
@@ -481,28 +497,46 @@ static void print_status_narrow(void) {
         case _CAD_FN:
             oled_write_P(PSTR("CAD fn\n"), false);
             break;
+
+        case _COLEMAKDH_GAMING:
+            oled_write_P(PSTR("COLEMAK GMG\n"), false);
+            break;
         default:
             // Or use the write_ln shortcut over adding '\n' to the end of your string
             oled_write_ln_P(PSTR("Undefined"), false);
     }
 
-    /* caps lock */
+    /* caps and num lock */
     oled_set_cursor(0, 6);
-    if (led_usb_state.caps_lock){
-        oled_write("CAPS", led_usb_state.caps_lock); //only highlight if CAPS lock is on
-    }
-    else {
-        oled_write("    ", led_usb_state.caps_lock); //normall don't show anything
-    }
-
+    if(led_usb_state.caps_lock && led_usb_state.num_lock)
+        {
+            oled_write("#CAP", led_usb_state.caps_lock); //only highlight if NUM and CAPS are on
+        }
+    else if (led_usb_state.caps_lock)
+        {
+            oled_write("CAPS", led_usb_state.caps_lock); //only highlight if CAPS lock is on and NUM is off
+        }
+    else if(led_usb_state.num_lock)
+        {
+            oled_write("    ", led_usb_state.num_lock); //only highlight if NUM is on and CAPS lock is off
+        }
+    else if(!led_usb_state.num_lock)
+        {
+            oled_write("#NAV", led_usb_state.num_lock); //only highlight if NUM is on and CAPS lock is off for keypad navigation
+        }
+    else 
+        {
+            oled_write("    ", led_usb_state.caps_lock); //normal don't show anything
+        }
+    
     /* OLED brightness val */
     char    s_oled_br[4];
     output = 0 + slope * (OLED_BRIGHTNESS_VAL - 0);
-    itoa(output, s_oled_br, 10);
+    itoa(output, s_oled_br, 10); //convert brightness to string
     oled_set_cursor(0, 7);
-    oled_write(sun_string, false);
-    oled_write(s_oled_br, false);
-    oled_write("%", false);
+    oled_write(sun_string, false); //write brightness character
+    oled_write(s_oled_br, false); //write value of brightness as %
+    oled_write("%", false);      //write % symbol
     s_oled_br[3] = '\0';
 
     /* wpm */
@@ -562,7 +596,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record){
     
         case OLED_BRIGHTER:
             if (record->event.pressed) {
-                if (OLED_BRIGHTNESS_VAL <= 255) {
+                if (OLED_BRIGHTNESS_VAL <= 255 && OLED_BRIGHTNESS_VAL >> 51) {
                     OLED_BRIGHTNESS_VAL = OLED_BRIGHTNESS_VAL + 51;
                     oled_set_brightness(OLED_BRIGHTNESS_VAL);
                 }    
@@ -597,6 +631,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record){
                     OLED_BRIGHTNESS_VAL = 0;
                 }
             } 
+        return false; // Skip all further processing of this key
+
+        case OLED_TURN_ON:
+            if (record->event.pressed) {
+                oled_on();
+            }
+        return false; // Skip all further processing of this key
+
+        case OLED_TURN_OFF:
+            if (record->event.pressed) {
+                oled_off();
+                OLED_BRIGHTNESS_VAL = 0;
+            }
         return false; // Skip all further processing of this key
 
         default:

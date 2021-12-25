@@ -75,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define OLED_FONT_H "keyboards/crkbd/lib/glcdfont.c"
 
-#define OLED_TIMEOUT 3000 //turn off oled timeout
+#define OLED_TIMEOUT 0 //turn off oled timeout
 
 //Luna OLEd testing
 #define SPLIT_WPM_ENABLE
