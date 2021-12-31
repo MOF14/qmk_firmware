@@ -30,6 +30,7 @@ rgb animations disabled due to space
 TODO: 12/21/21, finish optimizing keymap.
 TODO: 12/23/21, look into tap-dance for CAD layers.
 TODO: 12/23/21, Look into optomising function to brighten and dim OLED (OLED_BRIGHTNESS) with auto off (OLED_OFF) at min.
+TODO: 12/30/21, Figure out why image_count doesn't reset to zero on its own.
 
 */
 
@@ -332,7 +333,7 @@ static void cycle_logo(void) { //iterate through multiple OLED images at the pre
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 
         //right colors
-        // 'Devil Housepng', 128x32px VERTICAL 1-bit per pixel white background
+        // 'Devil Housepng', 128x32px VERTICAL 1-bit per pixel 
         // 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
         // 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f, 0x1f, 0x1f, 0x0f, 0x07, 0x27, 0x63, 0x01, 0xb8, 0xa1, 
         // 0x00, 0xa3, 0x1b, 0x83, 0x03, 0x0f, 0x33, 0x83, 0xfb, 0x83, 0x0b, 0x03, 0x07, 0x3f, 0xff, 0xff, 
@@ -418,9 +419,14 @@ static void cycle_logo(void) { //iterate through multiple OLED images at the pre
         break;
     
     default:
-        image_count=0; //reset image count
+        // image_count = 0; //reset to first image
         break;
     }
+
+    //!build to verify, not sure if works
+    if(image_count > 3){
+        image_count = 0; //reset to first image
+        }
 } //end of cycle_logo
 
 
@@ -643,10 +649,10 @@ static void print_status_narrow(void) {
     oled_write("%", false);      //write % symbol
     s_oled_br[3] = '\0';
 
-    char    s_im_ct[2];
+    char    s_im_ct[1];
     itoa(image_count, s_im_ct, 10); //convert image count to string
     oled_set_cursor(0, 9);
-    oled_write("im: ", false); //write image number
+    oled_write("im:", false); //write image number
     oled_write(s_im_ct, false);
 
 
