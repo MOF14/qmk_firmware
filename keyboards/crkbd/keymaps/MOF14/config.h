@@ -65,10 +65,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     // For full list of effects, see:
     // https://docs.qmk.fm/#/feature_rgb_matrix?id=rgb-matrix-effects
     // #    define RGB_MATRIX_SOLID_COLOR
-    #    define ENABLE_RGB_MATRIX_ALPHAS_MODS
+    // #    define ENABLE_RGB_MATRIX_ALPHAS_MODS
 
     // enabled only if RGB_MATRIX_FRAMEBUFFER_EFFECTS is defined
-    #    define ENABLE_RGB_MATRIX_TYPING_HEATMAP
+    // #    define ENABLE_RGB_MATRIX_TYPING_HEATMAP
     // #    define ENABLE_RGB_MATRIX_DIGITAL_RAIN
 
 #endif
@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define OLED_TIMEOUT 0 //turn off oled timeout
 
-//Luna OLEd testing
+//Luna OLED testing
 #define SPLIT_WPM_ENABLE
 
 #define SPLIT_LAYER_STATE_ENABLE
