@@ -23,7 +23,7 @@ to compile use: qmk compile -kb crkbd
 
 rgb animations disabled due to space
 
-12/30/21 filesize: 27514/28672 (95%, 1158 bytes free)
+05/17/22 filesize: firmware size is fine - 23864/28672 (83%, 4808 bytes free)
 */
 
 /* todo lists
