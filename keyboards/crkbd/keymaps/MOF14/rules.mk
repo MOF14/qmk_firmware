@@ -7,7 +7,7 @@ SPLIT_KEYBOARD = yes
 WPM_ENABLE = yes
 # TAP_DANCE_ENABLE = yes 
 
-RGB_MATRIX_ENABLE = yes
+# RGB_MATRIX_ENABLE = YES
 
 
 # if firmware size over limit, try this option
